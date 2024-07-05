@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cube.cloud.server.role.mapper.RoleMapper">
+
+    <select id="getDetails" resultType="com.cube.cloud.server.role.query.RoleQuery">
+        SELECT
+            ro.id AS id,
+            ro.name AS name,
+            ro.status AS status,
+            cu.name AS created_name,
+            ro.created_time AS created_time,
+            mu.name AS modified_name,
+            ro.modified_time AS modified_time,
+            org.name AS organization_name,
+            ro.remark AS remark
+        FROM sys_role ro
+                 LEFT JOIN sys_user cu ON cu.id = ro.created_id
+                 LEFT JOIN sys_user mu ON mu.id = ro.modified_id
+                 LEFT JOIN sys_organization org ON org.id = ro.organization_id
+        WHERE ro.is_delete = 0 AND org.is_delete = 0
+        <if test="roleId != null">
+            AND ro.id = #{roleId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <select id="getPage" resultType="com.cube.cloud.server.role.query.RoleQuery">
+        SELECT
+            ro.id AS id,
+            ro.name AS name,
+            ro.status AS status,
+            cu.name AS created_name,
+            ro.created_time AS created_time,
+            mu.name AS modified_name,
+            ro.modified_time AS modified_time,
+            org.name AS organization_name,
+            ro.remark AS remark
+        FROM sys_role ro
+                 LEFT JOIN sys_user cu ON cu.id = ro.created_id
+                 LEFT JOIN sys_user mu ON mu.id = ro.modified_id
+                 LEFT JOIN sys_organization org ON org.id = ro.organization_id
+        WHERE ro.is_delete = 0 AND org.is_delete = 0
+        <if test="input.name != null and input.name != ''">
+            AND ro.name LIKE CONCAT('%', #{input.name}, '%')
+        </if>
+        <if test="input.status != null">
+            AND ro.status = #{input.status}
+        </if>
+        <if test="organizationId != null">
+            AND ro.organization_id = #{organizationId}
+        </if>
+        GROUP BY ro.id
+        ORDER BY ro.created_time ASC
+    </select>
+</mapper>

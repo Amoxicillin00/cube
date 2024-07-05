@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  cube-server:
+    build: .
+    image: cube-server
+    volumes:
+      - /opt/app-service/cube-server/resources/static/ueditor/:/opt/app-service/cube-server/resources/static/ueditor/
+      - /opt/app-service/cube-server/resources/static/favicon.ico:/opt/app-service/cube-server/resources/static/favicon.ico
+      - /opt/app-service/cube-server/resources/application-dev.yml:/opt/app-service/cube-server/resources/application-dev.yml
+      - /opt/app-service/cube-server/resources/mybatis-config.xml:/opt/app-service/cube-server/resources/mybatis-config.xml
+#配置文件及堆大小分配
+    environment:
+          - _JAVA_OPTIONS=-Xmx512m -Xms256m
+          - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - '8001:8001'
+    restart: always
+    container_name: cube-server
+    networks:
+      - my-network
+
+networks:
+ my-network:
+   external: true

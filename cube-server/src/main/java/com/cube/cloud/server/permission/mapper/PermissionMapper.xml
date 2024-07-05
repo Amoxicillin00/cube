@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cube.cloud.server.permission.mapper.PermissionMapper">
+
+    <select id="getDetails" resultType="com.cube.cloud.server.permission.query.PermissionQuery">
+        SELECT
+            p.id AS id,
+            p.name AS name,
+            p.route AS route,
+            p.path AS path,
+            p.type AS type,
+            p.client_type AS client_type,
+            p.sort AS sort,
+            p.is_authorize AS is_authorize,
+            p.parent_id AS parent_id,
+            p.full_id AS full_id,
+            p.created_time AS created_time,
+            p.modified_time AS modified_time,
+            cu.name AS created_name,
+            mu.name AS modified_name
+        FROM sys_permission p
+                 LEFT JOIN sys_user cu ON cu.id = p.created_id
+                 LEFT JOIN sys_user mu ON mu.id = p.modified_id
+        WHERE p.is_delete = 0
+        <if test="permissionId != null">
+            AND p.id = #{roleId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <select id="getPage" resultType="com.cube.cloud.server.permission.query.PermissionQuery">
+        SELECT
+            p.id AS id,
+            p.name AS name,
+            p.route AS route,
+            p.path AS path,
+            p.type AS type,
+            p.sort AS sort,
+            p.parent_id AS parent_id,
+            p.full_id AS full_id,
+            p.icon_path AS icon_path,
+            p.created_time AS created_time,
+            p.modified_time AS modified_time,
+            p.remark AS remark,
+            cu.name AS created_name,
+            mu.name AS modified_name
+        FROM sys_permission p
+                 LEFT JOIN sys_user cu ON cu.id = p.created_id
+                 LEFT JOIN sys_user mu ON mu.id = p.modified_id
+        WHERE p.is_delete = 0
+        <if test="input.name != null and input.name != ''">
+            AND p.name LIKE CONCAT('%', #{input.name}, '%')
+        </if>
+        <if test="input.route != null and input.route != ''">
+            AND p.route LIKE CONCAT('%', #{input.route}, '%')
+        </if>
+        <if test="input.type != null">
+            AND p.type = #{input.type}
+        </if>
+        <if test="input.clientType != null">
+            AND p.client_type = #{input.clientType}
+        </if>
+        <if test="input.isAuthorize != null">
+            AND p.is_authorize = #{input.isAuthorize}
+        </if>
+        GROUP BY p.id
+        ORDER BY p.created_time ASC
+    </select>
+</mapper>

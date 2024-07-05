@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cube.cloud.server.document.mapper.DocumentMapper">
+
+    <select id="getDetails" resultType="com.cube.cloud.server.document.query.DocumentDetailsQuery">
+        SELECT
+            doc.id AS id,
+            doc.title AS title,
+            doc.content AS content,
+            cu.name AS created_name,
+            doc.created_time AS created_time,
+            mu.name AS modified_name,
+            doc.modified_time AS modified_time,
+            doc.remark AS remark
+        FROM cube_document doc
+                 LEFT JOIN sys_user cu ON cu.id = doc.created_id
+                 LEFT JOIN sys_user mu ON mu.id = doc.modified_id
+        WHERE doc.is_delete = 0
+        <if test="documentId != null">
+            AND doc.id = #{documentId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <select id="getPage" resultType="com.cube.cloud.server.document.query.DocumentDetailsQuery">
+        SELECT
+            doc.id AS id,
+            doc.title AS title,
+            doc.content AS content,
+            cu.name AS created_name,
+            doc.created_time AS created_time,
+            mu.name AS modified_name,
+            doc.modified_time AS modified_time,
+            doc.remark AS remark
+        FROM cube_document doc
+                 LEFT JOIN sys_user cu ON cu.id = doc.created_id
+                 LEFT JOIN sys_user mu ON mu.id = doc.modified_id
+        WHERE doc.is_delete = 0
+        <if test="input.title != null and input.title != ''">
+            AND doc.title LIKE CONCAT('%', #{input.title}, '%')
+        </if>
+        GROUP BY doc.id
+        ORDER BY doc.created_time
+    </select>
+</mapper>

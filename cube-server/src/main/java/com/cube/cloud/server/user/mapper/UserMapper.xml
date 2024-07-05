@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cube.cloud.server.user.mapper.UserMapper">
+
+    <select id="getDetails" resultType="com.cube.cloud.server.user.query.UserQuery">
+        SELECT
+            u.id,
+            u.name,
+            u.account,
+            u.nick_name,
+            u.phone_number,
+            u.email_address,
+            u.sex,
+            u.birthday,
+            u.avatar_path,
+            u.type,
+            u.status,
+            u.created_time,
+            u.modified_time,
+            u.remark,
+            o.id AS organization_id,
+            o.name AS organization_name,
+            cu.name AS created_name,
+            mu.name AS modified_name
+        FROM sys_user u
+                 LEFT JOIN sys_organization o ON o.id = u.organization_id
+                 LEFT JOIN sys_user cu ON cu.id = u.created_id
+                 LEFT JOIN sys_user mu ON mu.id = u.modified_id
+        WHERE u.is_delete = 0 AND o.is_delete = 0
+        <if test="userId != null">
+            AND u.id = #{userId}
+        </if>
+        LIMIT 1
+    </select>
+
+    <select id="getPage" resultType="com.cube.cloud.server.user.query.UserQuery">
+        SELECT
+            u.id,
+            u.name,
+            u.account,
+            u.nick_name,
+            u.phone_number,
+            u.status,
+            u.created_time,
+            u.modified_time,
+            o.id AS organization_id,
+            o.name AS organization_name,
+            cu.name AS created_name,
+            mu.name AS modified_name
+        FROM sys_user u
+                 LEFT JOIN sys_organization o ON o.id = u.organization_id
+                 LEFT JOIN sys_user cu ON cu.id = u.created_id
+                 LEFT JOIN sys_user mu ON mu.id = u.modified_id
+        WHERE u.is_delete = 0
+        <if test="organizationId != null">
+            AND u.organization_id = #{organizationId}
+        </if>
+        <if test="input.name != '' and input.name != null">
+            AND u.name LIKE CONCAT('%', #{input.name}, '%')
+        </if>
+        <if test="input.nickName != '' and input.nickName != null">
+            AND u.nick_name LIKE CONCAT('%', #{input.nickName}, '%')
+        </if>
+        <if test="input.phoneNumber != '' and input.phoneNumber != null">
+            AND u.phone_number LIKE CONCAT('%', #{input.phoneNumber}, '%')
+        </if>
+        <if test="input.status != null">
+            AND u.status = #{input.status}
+        </if>
+        ORDER BY u.created_time DESC
+    </select>
+</mapper>
