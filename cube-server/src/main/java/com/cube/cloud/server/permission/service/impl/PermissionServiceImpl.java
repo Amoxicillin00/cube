@@ -165,6 +165,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     @Override
+    public void deleteByModuleId(Long moduleId) {
+
+    }
+
+    @Override
     public BasePageOutput<PermissionItemOutput> getPage(PermissionPageInput input) {
         Page<PermissionQuery> page = this.baseMapper.getPage(Page.of(input.getCurrent(), input.getSize()), input);
         return PageUtils.buildBasePage(page, PermissionItemOutput.class);

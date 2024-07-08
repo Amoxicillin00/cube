@@ -35,6 +35,12 @@ public interface PermissionService extends IService<Permission> {
     void update(PermissionModifyInput input);
 
     /**
+     * 根据资源模块id删除资源权限
+     * @param moduleId 资源模块id
+     */
+    void deleteByModuleId(Long moduleId);
+
+    /**
      * 获取资源权限分页列表
      * @param input 查询参数
      * @return 资源权限分页列表
@@ -46,4 +52,5 @@ public interface PermissionService extends IService<Permission> {
      * @return 资源权限树
      */
     List<PermissionTreeOutput> getTree();
+
 }

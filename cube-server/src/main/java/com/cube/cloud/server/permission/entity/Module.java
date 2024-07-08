@@ -45,6 +45,12 @@ public class Module extends AbstractModifyEntity<Long> {
     private Integer type;
 
     /**
+     * 资源模块状态(0 : 禁用、1 : 启用)
+     */
+    @TableField(value = "status")
+    private Integer status;
+
+    /**
      * 排序
      */
     @TableField(value = "sort")

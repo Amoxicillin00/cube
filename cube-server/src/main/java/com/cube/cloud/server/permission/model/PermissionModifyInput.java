@@ -31,25 +31,10 @@ public class PermissionModifyInput extends AbstractModel<Long> {
     private String name;
 
     /**
-     * 权限路径path
+     * 权限路径URL
      */
-    @ApiModelProperty("权限路径path")
-    @Length(max = 200, message = "权限路径path长度不能超过" + 200 + "个字。")
-    private String path;
-
-    /**
-     * 资源类型(0 : 菜单、1 : 按钮、2 : 权限)
-     */
-    @ApiModelProperty("资源类型(0 : 菜单、1 : 按钮、2 : 权限)")
-    @NotNull(message = "资源类型不能为空")
-    private Integer type;
-
-    /**
-     * 业务类型(0 : Web、1 : APP、2 : H5)
-     */
-    @ApiModelProperty("业务类型(0 : Web、1 : APP、2 : H5)")
-    @NotNull(message = "业务类型不能为空")
-    private Integer clientType;
+    @ApiModelProperty("权限路径URL")
+    private String url;
 
     /**
      * 顺序
@@ -58,20 +43,14 @@ public class PermissionModifyInput extends AbstractModel<Long> {
     private Integer sort;
 
     /**
-     * 是否需要授权(0 : 不需要、1 : 需要)
+     * 图标icon
      */
-    @ApiModelProperty("是否需要授权(0 : 不需要、1 : 需要)")
-    private Integer isAuthorize;
+    @ApiModelProperty("图标icon")
+    private String icon;
 
     /**
-     * 父级id
+     * 备注
      */
-    @ApiModelProperty("父级id")
-    private Long parentId;
-
-    /**
-     * 图标路径
-     */
-    @ApiModelProperty("图标路径")
-    private String iconPath;
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

@@ -4,40 +4,38 @@ import com.cube.cloud.core.application.model.AbstractModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-/**
- * Created with IntelliJ IDEA.
- *
- * @author Long
- * @date 2023-01-04 11:10
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PermissionItemOutput extends AbstractModel<Long> {
+public class ModuleItemOutput extends AbstractModel<Long> {
 
-    private static final long serialVersionUID = -6756777842315092045L;
+    private static final long serialVersionUID = 1L;
 
     /**
-     * 权限名称
+     * 资源名称
      */
-    @ApiModelProperty("权限名称")
+    @ApiModelProperty("模块名称")
     private String name;
 
     /**
-     * 唯一路由标识
+     * 路由标识
      */
     @ApiModelProperty("唯一路由标识")
     private String route;
 
     /**
-     * 权限路径URL
+     * 是否需要授权(false : 不需要、true : 需要)
      */
-    @ApiModelProperty("权限路径URL")
-    private String url;
+    @ApiModelProperty("是否需要授权(false : 不需要、true : 需要)")
+    private boolean isAuthorize;
+
+    /**
+     * 模块类型(0 : Web、1 : APP、2 : H5)
+     */
+    @ApiModelProperty("模块类型(0 : Web、1 : APP、2 : H5)")
+    private Integer type;
 
     /**
      * 排序
