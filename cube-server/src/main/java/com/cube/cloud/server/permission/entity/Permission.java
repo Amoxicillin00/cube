@@ -18,28 +18,40 @@ import java.io.Serializable;
  * @date 2023-06-07 14:30
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName("sys_permission")
-public class Permission implements Serializable {
+public class Permission extends AbstractModifyEntity<Long> {
 
     private static final long serialVersionUID = 4453962235211253608L;
 
 
     /**
-     * 唯一id
+     * 模块id
      */
-    @Id
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    @TableField(value = "module_id")
+    private Long moduleId;
 
     /**
-     * 资源id
+     * 资源名称
      */
-    @TableField(value = "resource_id")
-    private Long resourceId;
+    @TableField(value = "name")
+    private String name;
 
     /**
-     * 权限路径path
+     * 资源路由标识
      */
-    @TableField(value = "path")
-    private String path;
+    @TableField(value = "permission_route")
+    private String permissionRoute;
+
+    /**
+     * 权限路径URL
+     */
+    @TableField(value = "permission_url")
+    private String permissionUrl;
+
+    /**
+     * 排序
+     */
+    @TableField(value = "sort")
+    private Integer sort;
 }
