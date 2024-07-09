@@ -1,6 +1,5 @@
 package com.cube.cloud.server.permission.model;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.cube.cloud.core.application.model.BaseTreeOutput;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

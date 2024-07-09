@@ -56,4 +56,10 @@ public class PermissionAddInput implements Serializable {
      */
     @ApiModelProperty("图标icon")
     private String icon;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

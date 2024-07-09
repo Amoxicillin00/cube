@@ -50,5 +50,12 @@ public interface ModuleService extends IService<Module> {
      * @param input 输入参数
      * @return 资源模块分页列表
      */
-    BasePageOutput<PermissionItemOutput> getPage(PermissionPageInput input);
+    BasePageOutput<ModuleItemOutput> getPage(ModulePageInput input);
+
+    /**
+     * 校验资源模块是否存在
+     * @param moduleId 资源模块id
+     * @return 资源模块信息
+     */
+    Module CheckModule(Long moduleId);
 }

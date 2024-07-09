@@ -37,7 +37,7 @@ public class StpInterfaceImpl implements StpInterface {
 
 
     /**
-     * 获取用户权限集合(目前只做了角色的权限)
+     * 获取用户权限集合(角色权限+用户权限)
      * @param loginId 用户id
      * @param loginType 登录类型
      * @return 权限列表

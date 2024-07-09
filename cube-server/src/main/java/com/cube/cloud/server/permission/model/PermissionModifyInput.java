@@ -4,10 +4,6 @@ import com.cube.cloud.core.application.model.AbstractModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,8 +22,6 @@ public class PermissionModifyInput extends AbstractModel<Long> {
      * 权限名称
      */
     @ApiModelProperty("权限名称")
-    @NotEmpty(message = "权限名称不能为空")
-    @Length(max = 50, message = "权限名称长度不能超过" + 50 + "个字。")
     private String name;
 
     /**

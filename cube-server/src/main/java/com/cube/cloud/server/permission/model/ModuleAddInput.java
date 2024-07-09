@@ -22,6 +22,13 @@ public class ModuleAddInput implements Serializable {
 
 
     /**
+     * 父级id
+     */
+    @ApiModelProperty("父级id")
+    @NotNull(message = "父级id不能为空")
+    private Long parentId;
+
+    /**
      * 模块名称
      */
     @ApiModelProperty("模块名称")
@@ -67,4 +74,10 @@ public class ModuleAddInput implements Serializable {
      */
     @TableField(value = "status")
     private Integer status;
+
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

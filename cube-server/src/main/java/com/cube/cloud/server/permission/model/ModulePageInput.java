@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ModulePageInput extends BasePageInput {
@@ -29,6 +27,5 @@ public class ModulePageInput extends BasePageInput {
      * 模块类型(0 : Web、1 : APP、2 : H5)
      */
     @ApiModelProperty("模块类型(0 : Web、1 : APP、2 : H5)")
-    @NotNull(message = "模块类型不能为空")
     private Integer type;
 }

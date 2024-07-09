@@ -8,6 +8,7 @@ import com.cube.cloud.core.constants.Constants;
 import com.cube.cloud.server.role.entity.RolePermission;
 import com.cube.cloud.server.role.mapper.RolePermissionMapper;
 import com.cube.cloud.server.role.service.RolePermissionService;
+import com.cube.cloud.server.user.entity.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,15 +49,11 @@ public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper,
         return this.baseMapper.getPermissionListByRoleId(roleId);
     }
 
-    @Override
-    public List<Long> getRoleIdListAndDelete(List<Long> permissionIdList) {
-        LambdaQueryWrapper<RolePermission> wrapper = Wrappers.lambdaQuery();
-        wrapper.in(RolePermission::getPermissionId, permissionIdList);
-        List<RolePermission> rolePermissionList = this.list(wrapper);
-        this.removeByIds(rolePermissionList.stream().map(RolePermission::getId).collect(Collectors.toList()));
-        return rolePermissionList.stream().map(RolePermission::getRoleId).collect(Collectors.toList());
-    }
 
+    /**
+     * 超级管理员授权
+     * @param permissionId 权限id
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addAdminPermission(Long permissionId) {
@@ -64,6 +61,17 @@ public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper,
         rolePermission.setRoleId(Constants.SUPER_ROLE);
         rolePermission.setPermissionId(permissionId);
         this.save(rolePermission);
+    }
+
+    /**
+     * 根据资源权限id删除角色相关权限
+     * @param permissionId 资源权限id
+     */
+    @Override
+    public void deleteByPermissionId(Long permissionId) {
+        new LambdaUpdateChainWrapper<>(baseMapper)
+                .eq(RolePermission::getPermissionId, permissionId)
+                .remove();
     }
 
 }

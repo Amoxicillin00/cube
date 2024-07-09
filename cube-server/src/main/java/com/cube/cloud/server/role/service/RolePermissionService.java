@@ -32,16 +32,15 @@ public interface RolePermissionService {
     List<String> getListByRoleId(Long roleId);
 
     /**
-     * 获取并删除角色权限关联关系
-     * @param permissionIdList 权限列表
-     * @return 角色id列表
-     */
-    List<Long> getRoleIdListAndDelete(List<Long> permissionIdList);
-
-    /**
      * 超级管理员添加权限
      * @param permissionId 权限id
      */
     void addAdminPermission(Long permissionId);
+
+    /**
+     * 根据资源权限id删除角色相关权限
+     * @param permissionId 资源权限id
+     */
+    void deleteByPermissionId(Long permissionId);
 
 }

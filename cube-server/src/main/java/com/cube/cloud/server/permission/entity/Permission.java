@@ -40,18 +40,24 @@ public class Permission extends AbstractModifyEntity<Long> {
     /**
      * 资源路由标识
      */
-    @TableField(value = "permission_route")
-    private String permissionRoute;
+    @TableField(value = "route")
+    private String route;
 
     /**
      * 权限路径URL
      */
-    @TableField(value = "permission_url")
-    private String permissionUrl;
+    @TableField(value = "url")
+    private String url;
 
     /**
      * 排序
      */
     @TableField(value = "sort")
     private Integer sort;
+
+    /**
+     * 图标
+     */
+    @TableField(value = "icon")
+    private String icon;
 }

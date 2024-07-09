@@ -3,5 +3,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.cube.cloud.server.permission.mapper.ModuleMapper">
 
+    <select id="getPage" resultType="com.cube.cloud.server.permission.query.ModuleQuery">
+        SELECT
+            mod.id AS id,
+            mod.name AS name,
+            mod.route AS route,
+            mod.is_authorize AS is_authorize,
+            mod.type AS type,
+            mod.status AS status,
+            mod.sort AS sort,
+            mod.icon AS icon,
+            mod.parent_id AS parent_id,
+            mod.created_time AS created_time,
+            mod.modified_time AS modified_time,
+            mod.remark AS remark,
+            cu.name AS created_name,
+            mu.name AS modified_name
+        FROM sys_module mod
+        LEFT JOIN sys_user cu ON cu.id = mod.created_id
+        LEFT JOIN sys_user mu ON mu.id = mod.modified_id
+        WHERE mod.is_delete = 0
+        <if test="input.name != null and input.name != ''">
+            AND mod.name LIKE CONCAT('%', #{input.name}, '%')
+        </if>
+        <if test="input.route != null and input.route != ''">
+            AND mod.route LIKE CONCAT('%', #{input.route}, '%')
+        </if>
+        <if test="input.type != null">
+            AND mod.type = #{input.type}
+        </if>
+        GROUP BY mod.id
+        ORDER BY mod.created_time ASC
+    </select>
+
 
 </mapper>

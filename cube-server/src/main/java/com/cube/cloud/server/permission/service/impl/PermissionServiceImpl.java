@@ -3,36 +3,33 @@ package com.cube.cloud.server.permission.service.impl;
 import cn.dev33.satoken.session.SaSession;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cube.cloud.core.application.model.BaseIdInput;
 import com.cube.cloud.core.application.model.BasePageOutput;
 import com.cube.cloud.core.constants.Constants;
-import com.cube.cloud.core.enums.PermissionTypeEnum;
 import com.cube.cloud.core.exception.ExceptionUtils;
 import com.cube.cloud.core.util.MapUtils;
 import com.cube.cloud.core.util.PageUtils;
+import com.cube.cloud.core.util.StringUtils;
 import com.cube.cloud.core.util.TreeUtils;
 import com.cube.cloud.server.permission.entity.Permission;
 import com.cube.cloud.server.permission.mapper.PermissionMapper;
 import com.cube.cloud.server.permission.model.*;
 import com.cube.cloud.server.permission.query.PermissionQuery;
+import com.cube.cloud.server.permission.service.ModuleService;
 import com.cube.cloud.server.permission.service.PermissionService;
 import com.cube.cloud.server.role.service.RolePermissionService;
-import com.cube.cloud.server.user.entity.UserRole;
-import com.cube.cloud.server.user.service.UserRoleService;
+import com.cube.cloud.server.user.service.UserPermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
@@ -46,7 +43,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     private static final Logger logger = LoggerFactory.getLogger(PermissionServiceImpl.class);
 
+    @Autowired
+    private ModuleService moduleService;
 
+    @Autowired
+    private RolePermissionService rolePermissionService;
+
+    @Autowired
+    private UserPermissionService userPermissionService;
 
 
 
@@ -54,78 +58,39 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void add(PermissionAddInput input) {
-        /*Permission permission = MapUtils.map(input, Permission.class);
-        // 校验父级节点，并生成路由标识，0为根节点
-        if (Objects.equals(0L, permission.getParentId())) {
-            permission.setLevel(1);
-        } else {
-            Permission parentPermission = this.getById(permission.getParentId());
-            ExceptionUtils.check(Objects.isNull(parentPermission), "父级资源不存在 : " + permission.getParentId());
-            if (Objects.equals(PermissionTypeEnum.BUTTON.getCode(), permission.getType())) {
-                permission.setRoute(parentPermission.getRoute() + "_button_" + permission.getRoute());
-            } else {
-                permission.setRoute(parentPermission.getRoute() + "_" +permission.getRoute());
-            }
-            permission.setLevel(parentPermission.getLevel() + 1);
-            permission.setFullId(parentPermission.getFullId());
-        }
-        // 校验资源是否已存在
-        LambdaQueryWrapper<Permission> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Permission::getName, permission.getName())
-                .eq(Permission::getRoute, permission.getRoute())
-                .eq(Permission::getType, permission.getType())
-                .eq(Permission::getClientType, permission.getClientType());
-        ExceptionUtils.check(Objects.nonNull(this.getOne(wrapper)), "资源已存在 : " + permission.getName());
-        // 校验权限是否已存在
-        wrapper.clear();
-        if (Objects.equals(PermissionTypeEnum.PERMISSION.getCode(), permission.getType())) {
-            ExceptionUtils.check(StrUtil.isBlankIfStr(permission.getPath()), "权限路径不能为空");
-            wrapper.eq(Permission::getPath, permission.getPath());
-            ExceptionUtils.check(Objects.nonNull(this.getOne(wrapper)), "资源已存在 : " + permission.getPath());
-        } else {
-            permission.setPath("/");
-        }
+        Permission permission = MapUtils.map(input, Permission.class);
+        // 校验参数
+        CheckParameter(permission);
         // 保存
         this.save(permission);
-        // 更新fullId
-        if (Objects.isNull(permission.getFullId())) {
-            permission.setFullId(String.valueOf(permission.getId()));
-        } else {
-            permission.setFullId(permission.getFullId() + "," + permission.getId());
-        }
-        this.updateById(permission);
+        logger.info("添加资源权限成功！data : {}", permission);
         // 给超级管理员增加权限
         this.rolePermissionService.addAdminPermission(permission.getId());
         // 更新超级管理员Sa-Session的权限列表
         if (CollUtil.isNotEmpty(StpUtil.getTokenValueListByLoginId(Constants.SUPER_ADMIN))) {
             StpUtil.getSessionByLoginId(Constants.SUPER_ADMIN).delete(SaSession.PERMISSION_LIST);
-        }*/
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delete(BaseIdInput input) {
-        /*// 校验资源
-        Permission permission = this.checkPermission(input.getId());
-        List<Long> permissionIdList =  new ArrayList<>();
-        this.deleteChild(permission.getId(), permissionIdList);
-        // 角色id列表
-        List<Long> roleIdList = this.rolePermissionService.getRoleIdListAndDelete(permissionIdList);
-        List<UserRole> userRoleList = this.userRoleService.getListByRoleIdList(roleIdList);
-        // SaSession操作权限处理
-        if (CollUtil.isNotEmpty(userRoleList)) {
-            userRoleList.forEach(e -> {
-                // 判断是否登录 登录时会有token
-                if (CollUtil.isNotEmpty(StpUtil.getTokenValueListByLoginId(e.getUserId()))) {
-                    StpUtil.getSessionByLoginId(e.getUserId()).delete(SaSession.PERMISSION_LIST);
-                }
-            });
-        }*/
+        // 检查需要删除的资源权限是否存在
+        Permission permission = CheckPermission(input.getId());
+        // 逻辑删除
+        this.removeById(permission.getId());
+        logger.info("删除资源权限成功！data : {}", permission);
+
+        // 删除角色权限相关数据
+        this.rolePermissionService.deleteByPermissionId(permission.getId());
+        // 删除用户权限相关数据
+        this.userPermissionService.deleteByPermissionId(permission.getId());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(PermissionModifyInput input) {
+        Permission permission = CheckPermission(input.getId());
         /*// 校验资源
         Permission permission = this.checkPermission(input.getId());
         // 校验权限名称
@@ -181,25 +146,32 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     }
 
     /**
-     * 递归删除子节点权限
-     * @param permissionId 权限id
+     * 校验资源权限是否存在
+     * @param permissionId 资源权限id
+     * @return 资源权限信息
      */
-    private void deleteChild(Long permissionId, List<Long> permissionIdList) {
-        /*permissionIdList.add(permissionId);
-        LambdaQueryWrapper<Permission> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(Permission::getParentId, permissionId);
-        List<Permission> permissionList = this.list(wrapper);
-        if (CollUtil.isNotEmpty(permissionList)) {
-            permissionList.forEach(e -> deleteChild(e.getId(), permissionIdList));
-        }
-        this.removeById(permissionId);*/
+    public Permission CheckPermission(Long permissionId) {
+        Permission permission = this.getById(permissionId);
+        ExceptionUtils.check(Objects.isNull(permission), "资源模块不存在 : " + permission);
+        return permission;
     }
 
     /**
-     * 从上至下递归权限节点
-     * @param permissionId 递归开始权限id
-     * @return 权限列表
+     * 参数校验
+     * @param permission 资源权限
      */
+    private void CheckParameter(Permission permission) {
+        LambdaQueryWrapper<Permission> queryWrapper = new LambdaQueryWrapper<>();
+        // 校验资源模块是否存在
+        if (Objects.nonNull(permission.getModuleId())) {
+            moduleService.CheckModule(permission.getModuleId());
+        }
+        // 校验唯一路由标识是否存在
+        if (StringUtils.isNotNullOrBlank(permission.getRoute())) {
+            queryWrapper.clear();
 
-
+            queryWrapper.eq(Permission::getRoute, permission.getRoute());
+            ExceptionUtils.check(Objects.nonNull(this.getOne(queryWrapper)), "资源权限唯一路由标识已存在 : " + permission.getRoute());
+        }
+    }
 }

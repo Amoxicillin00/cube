@@ -4,9 +4,7 @@ import com.cube.cloud.core.application.model.AbstractModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**

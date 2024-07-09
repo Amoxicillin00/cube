@@ -61,4 +61,10 @@ public class Module extends AbstractModifyEntity<Long> {
      */
     @TableField(value = "icon")
     private String icon;
+
+    /**
+     * 父级id
+     */
+    @TableField(value = "parent_id")
+    private Long parentId;
 }

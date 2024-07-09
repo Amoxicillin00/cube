@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cube.cloud.server.permission.entity.Permission;
 import com.cube.cloud.server.permission.model.PermissionPageInput;
 import com.cube.cloud.server.permission.query.PermissionQuery;
-import com.cube.cloud.server.role.model.RolePageInput;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
